@@ -42,7 +42,7 @@
 						xhr.onreadystatechange = function () {
 							if (this.readyState != 4)
 								return;
-							document.body.innerHTML += '成功上传文件,文件内容：<hr /><pre>' + this.responseText + '</pre>';
+							document.body.innerHTML += '<div class="data_content">成功上传文件,文件内容：<hr /><pre>' + this.responseText + '</pre></div>';
 						}
 						xhr.setRequestHeader('Content-Type', 'multipart/form-data');
 						xhr.setRequestHeader('X-File-Name', files[i].fileName); // 将文件名传递给服务器端
@@ -54,9 +54,10 @@
         </script>
     </head>
     <body>
-		<h1>Google Chrome托拽文件上传实例(Chrome2+)</h1>
-		<p>Google Chrome的文件上传控件直接将文件托放选择文件，也支持直接将文件托放进网页获取到所托放的文件信息，
+		<h1>Chrome托拽文件上传实例(Chrome2+)，点<a href="firefox36_drop_upload.html">这  里</a>查看firefox3.6版本的上传</h1>
+		<p>Chrome的文件上传控件直接将文件托放选择文件，也支持直接将文件托放进网页获取到所托放的文件信息，
 		然后通过XMLHttpRequest的send方法将选中的文件发送到服务器端<p>
+		<div style="color: green">这个demo需要将数据发送到服务器端，所以要测试这个demo需要从web服务器访问该页面，直接在本地打开文件测试是无法看到效果的</div>
 		<div class="way">方法一：直接选择(支持多文件选择)<input type="file" multiple="multiple" id="file" name="file" onchange="handleFile(this)" /></div>
 		<div class="way">方法二：透明文件选择，Chrome支持托放文件到文件选择控件上(控件已设置透明)
 		<div class="drop_file dropzone"><input type="file" multiple="multiple" id="dropable_file" name="dropable_file" onchange="handleFile(this)" /></div></div>
@@ -65,6 +66,11 @@
 		</div>
     </body>
 	<style type="text/css">
+	  .data_content {
+	  	border: 4px solid green;
+		padding: 10px;
+		margin-top: 10px;
+	  }
 		.way {
 			padding: 10px;
 			border-bottom: 2px solid #ddd;

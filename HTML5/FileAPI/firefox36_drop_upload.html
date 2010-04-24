@@ -13,10 +13,15 @@
         vertical-align: middle;
         display: table-cell;
       }
+	  .data_content {
+	  	border: 4px solid green;
+		padding: 10px;
+		margin-top: 10px;
+	  }
     </style>
     <script type="text/javascript">
       function handleFiles(files) {
-        var txt = "选择文件数：files.length = " + files.length + "<br/>";
+        var txt = "选择文件数：" + files.length + "<br/>";
         for (var i = 0; i < files.length; i++) {
           var f = files.item(i);
           txt += i + ": " + f.name;
@@ -24,20 +29,20 @@
         }
         document.getElementById("status").innerHTML = txt;
 
-        if (files.length == 1) {
-          document.getElementById("data").innerHTML = "blah";
+		for(var i=0; i < files.length; i++) {
           var reader = new FileReader();
+		  // 异步访问，在文件读取完以后显示文件内容
           reader.onloadend = function(e) {
-            var len = e.target.result.length;
-            document.getElementById("data").innerHTML = "doc length: " + len;
-            alert(e.target.result); // 显示文件内容
+			document.body.innerHTML += "<div class='data_content'>" + e.target.result + "</div>";
           };
-          reader.readAsBinaryString(files[0]);
-        }
+		  // 开始访问文件内容
+          reader.readAsBinaryString(files[i]);
+		 }
       }
     </script>
   </head>
   <body>
+  	<h1>Firefox托拽测试 点击<a href="chrome_drop_upload.html">这 里</a>查看Chrome版本</h1>
     <b>选择文件 </b>
     <input type="file" multiple="multiple" id="input" onChange="handleFiles(this.files)" />
     <div id="status"></div>
@@ -56,9 +61,8 @@
     dropbox.addEventListener("drop", drop, false);
 
     function dragenter(e) {
-      e.stopPropagation(); // 阻止事件冒泡以及默认的处理方法
-      e.preventDefault();  // 一般把文件拖到页面中会导致浏览器直接打开该文件
-      					   // 如果是能打开的文件浏览器就会打开，否则可能会出现文件下载提示
+      e.stopPropagation();
+      e.preventDefault();
     }
 
     function dragover(e) {
@@ -70,10 +74,8 @@
       e.stopPropagation();
       e.preventDefault();
 
-      var dt = e.dataTransfer; // 拖放接口的数据传递
-      var files = dt.files;
-
-      handleFiles(files);
+      handleFiles(e.dataTransfer.files);
+	  return false;
     }
     </script>
   </body>
