@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+		<title>Google Chrome托拽上传文件Demo</title>
+        <script type="text/javascript">
+            window.onload = function () {
+                var div = document.getElementById('div');
+                div.ondragenter = div.ondragover = function (e) {
+					console.log(e);
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'copy'; // 让鼠标出现复制文件时的样式
+					e.target.style.border = "1px solid red";
+
+                    return false;
+                }
+                div.ondrop = function (e) {
+					uploadFiles(e.dataTransfer.files);
+
+					e.target.style.border = "1px solid green";
+
+                    e.preventDefault();
+                    return false;
+                }
+					div.ondragleave = function(e) {
+						e.target.style.border = "1px solid #000";
+					}
+            }
+
+			
+
+			function handleFile(e) {
+				uploadFiles(e.files);
+			}
+
+			// 通过Ajax将File对象发送到服务器端
+			function uploadFiles(files) {
+				document.body.innerHTML += "上传" + files.length + "个文件...<br />";
+				
+				for(var i=0; i < files.length; ++i) {
+						var xhr = new XMLHttpRequest;
+						xhr.open('post', 'handler.php', true);
+						xhr.onreadystatechange = function () {
+							if (this.readyState != 4)
+								return;
+							document.body.innerHTML += '成功上传文件:' + files[i].fileName + '，文件内容：<hr /><pre>' + this.responseText + '</pre>';
+						}
+						xhr.setRequestHeader('Content-Type', 'multipart/form-data');
+						xhr.setRequestHeader('X-File-Name', file.fileName); // 将文件名传递给服务器端
+						xhr.setRequestHeader('X-File-Size', file.fileSize);
+						xhr.send(files[i]); // 将file对象发送到服务器端 
+				}
+			}
+        </script>
+    </head>
+    <body>
+		<h1>Google Chrome托拽文件上传实例</h1>
+		<p>Google Chrome的文件上传控件直接将文件托放选择文件，也支持直接将文件托放进网页获取到所托放的文件信息，
+		然后通过XMLHttpRequest的send方法将选中的文件发送到服务器短<p>
+		<div class="way">方法一：直接选择(支持多文件选择)<input type="file" multiple="multiple" id="file" name="file" onchange="handleFile(this)" /></div>
+		<div class="way">方法二：托放文件到选择控件上<input type="file" multiple="multiple" id="dropable_file" name="dropable_file" onchange="handleFile(this)" /></div>
+		<div class="way">方法三：直接通过托放接口访问所托放的文件信息
+        	<div id="div" style="width: 100%; height: 200px; border: 1px solid blue">或者将文件托放到这里（支持多文件）</div>
+		</div>
+
+		<input type="text" style="border-style: none" name="test" /> test
+    </body>
+	<style type="text/css">
+		.way {
+			border-bottom: 1px solid #ddd;
+		}
+		input:focus {
+			outline:none;	
+		}
+	</style>
+</html>

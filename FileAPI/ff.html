@@ -1,0 +1,80 @@
+<html>
+  <head>
+  	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>HTML File upload test</title>
+    <style type="text/css">
+      .dropbox {
+        width: 250px;
+        height: 150px;
+        border: 4px dashed black;
+        -moz-border-radius: 8px;
+        -webkit-border-radius: 8px;
+        text-align: center;
+        vertical-align: middle;
+        display: table-cell;
+      }
+    </style>
+    <script type="text/javascript">
+      function handleFiles(files) {
+        var txt = "选择文件数：files.length = " + files.length + "<br/>";
+        for (var i = 0; i < files.length; i++) {
+          var f = files.item(i);
+          txt += i + ": " + f.name;
+          txt += " (" + f.type + "; " + f.size + " bytes)<br/>";
+        }
+        document.getElementById("status").innerHTML = txt;
+
+        if (files.length == 1) {
+          document.getElementById("data").innerHTML = "blah";
+          var reader = new FileReader();
+          reader.onloadend = function(e) {
+            var len = e.target.result.length;
+            document.getElementById("data").innerHTML = "doc length: " + len;
+            alert(e.target.result); // 显示文件内容
+          };
+          reader.readAsBinaryString(files[0]);
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <b>选择文件 </b>
+    <input type="file" multiple="multiple" id="input" onChange="handleFiles(this.files)" />
+    <div id="status"></div>
+    <div id="data"></div>
+
+    <div id="dropbox" class="dropbox" >
+    <b>或者把文件拖到这里吧（支持多文件）</b>
+    </div>
+
+    <p>This test is based on <a href="https://developer.mozilla.org/en/Using_files_from_web_applications">this doc</a> and <a href="https://developer.mozilla.org/en/DOM/FileReader">this doc</a>.</p>
+
+    <script type="text/javascript">
+    var dropbox = document.getElementById("dropbox");
+    dropbox.addEventListener("dragenter", dragenter, false);
+    dropbox.addEventListener("dragover", dragover, false);
+    dropbox.addEventListener("drop", drop, false);
+
+    function dragenter(e) {
+      e.stopPropagation(); // 阻止事件冒泡以及默认的处理方法
+      e.preventDefault();  // 一般把文件拖到页面中会导致浏览器直接打开该文件
+      					   // 如果是能打开的文件浏览器就会打开，否则可能会出现文件下载提示
+    }
+
+    function dragover(e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+
+    function drop(e) {
+      e.stopPropagation();
+      e.preventDefault();
+
+      var dt = e.dataTransfer; // 拖放接口的数据传递
+      var files = dt.files;
+
+      handleFiles(files);
+    }
+    </script>
+  </body>
+</html>
