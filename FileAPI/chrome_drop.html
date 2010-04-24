@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
 		<title>Google Chrome托拽上传文件Demo</title>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
         <script type="text/javascript">
             window.onload = function () {
                 var div = document.getElementById('div');
@@ -9,25 +10,24 @@
 					console.log(e);
                     e.preventDefault();
                     e.dataTransfer.dropEffect = 'copy'; // 让鼠标出现复制文件时的样式
-					e.target.style.border = "1px solid red";
+					e.target.style.background = "yellow";
 
                     return false;
                 }
                 div.ondrop = function (e) {
-					uploadFiles(e.dataTransfer.files);
+					uploadFiles(e.dataTransfer.files); // 文件可以通过鼠标的MouseEvent传递过来
 
-					e.target.style.border = "1px solid green";
+					e.target.style.background = "lightgray";
 
                     e.preventDefault();
                     return false;
                 }
 					div.ondragleave = function(e) {
-						e.target.style.border = "1px solid #000";
+						e.target.style.background = "lightgreen";
 					}
             }
-
 			
-
+			// 用户选择文件时处理文件上传
 			function handleFile(e) {
 				uploadFiles(e.files);
 			}
@@ -42,31 +42,58 @@
 						xhr.onreadystatechange = function () {
 							if (this.readyState != 4)
 								return;
-							document.body.innerHTML += '成功上传文件:' + files[i].fileName + '，文件内容：<hr /><pre>' + this.responseText + '</pre>';
+							document.body.innerHTML += '成功上传文件,文件内容：<hr /><pre>' + this.responseText + '</pre>';
 						}
 						xhr.setRequestHeader('Content-Type', 'multipart/form-data');
-						xhr.setRequestHeader('X-File-Name', file.fileName); // 将文件名传递给服务器端
-						xhr.setRequestHeader('X-File-Size', file.fileSize);
+						xhr.setRequestHeader('X-File-Name', files[i].fileName); // 将文件名传递给服务器端
+						xhr.setRequestHeader('X-File-Size', files[i].fileSize);
 						xhr.send(files[i]); // 将file对象发送到服务器端 
+						console.log(files[i]);
 				}
 			}
         </script>
     </head>
     <body>
-		<h1>Google Chrome托拽文件上传实例</h1>
+		<h1>Google Chrome托拽文件上传实例(Chrome2+)</h1>
 		<p>Google Chrome的文件上传控件直接将文件托放选择文件，也支持直接将文件托放进网页获取到所托放的文件信息，
-		然后通过XMLHttpRequest的send方法将选中的文件发送到服务器短<p>
+		然后通过XMLHttpRequest的send方法将选中的文件发送到服务器端<p>
 		<div class="way">方法一：直接选择(支持多文件选择)<input type="file" multiple="multiple" id="file" name="file" onchange="handleFile(this)" /></div>
-		<div class="way">方法二：托放文件到选择控件上<input type="file" multiple="multiple" id="dropable_file" name="dropable_file" onchange="handleFile(this)" /></div>
+		<div class="way">方法二：透明文件选择，Chrome支持托放文件到文件选择控件上(控件已设置透明)
+		<div class="drop_file dropzone"><input type="file" multiple="multiple" id="dropable_file" name="dropable_file" onchange="handleFile(this)" /></div></div>
 		<div class="way">方法三：直接通过托放接口访问所托放的文件信息
-        	<div id="div" style="width: 100%; height: 200px; border: 1px solid blue">或者将文件托放到这里（支持多文件）</div>
+        	<div id="div" class="dropzone">或者将文件托放到这里（支持多文件）</div>
 		</div>
-
-		<input type="text" style="border-style: none" name="test" /> test
     </body>
 	<style type="text/css">
 		.way {
-			border-bottom: 1px solid #ddd;
+			padding: 10px;
+			border-bottom: 2px solid #ddd;
+		}
+		.way:hover {
+		}
+		.dropzone {
+			border: 4px dashed #aaa;
+			height: 180px;
+			width: 400px;
+		}
+		.dropzone:hover {
+			border-color: #777;
+		}
+		#dropable_file {
+			font-size: 100px;
+			opacity: 0;	
+			padding: 30px;
+			height: 100%;
+			width: auto;
+			position: relative;
+		}
+		.drop_file {
+			overflow:hidden;
+			background:url(download.png) center bottom no-repeat;
+			border: 4px dashed #aaa;
+		}
+		.drop_file:hover {
+			background-image: url(download_on.png);
 		}
 		input:focus {
 			outline:none;	
